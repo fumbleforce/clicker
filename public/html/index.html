@@ -10,29 +10,31 @@
             <div id="topView" class="view">
                 <ul class="inlineList center">
                     <li>
-                        Wood <span>{{ resources.wood | integer }}</span>
+                        Wood <span>{{ data.resources.wood | integer }}</span>
                     </li>
                     <li>
-                        Stone <span>{{ resources.stone | integer }}</span>
+                        Stone <span>{{ data.resources.stone | integer }}</span>
                     </li>
                     <li>
-                        Meat <span>{{ resources.meat | integer }}</span>
+                        Meat <span>{{ data.resources.meat | integer }}</span>
                     </li>
                 </ul>
             </div>
             <div id="gameView" class="view" ng-controller="ResourceCtrl">
+                <h1>{{ data.town_name }}</h1><input type="text" ng-model="data.town_name" placeholder="{{ data.town_name }}"></input>
+                
                 <button ng-click="chop_wood()">Chop wood</button>
                 <button ng-click="mine_stone()">Mine stone</button>
                 <button ng-click="hunt()">Hunt</button>
 
                 <div class="workerContainer">
-                    <span class="worker hunter" ng-repeat="hunter in workers.hunters">Hunter</span>
+                    <span class="worker hunter" ng-repeat="hunter in data.workers.hunters">Hunter</span>
                 </div>
                 <div class="workerContainer">
-                    <span class="worker miner" ng-repeat="miner in workers.miners">Miner</span>
+                    <span class="worker miner" ng-repeat="miner in data.workers.miners">Miner</span>
                 </div>
                 <div class="workerContainer">
-                    <span class="worker logger" ng-repeat="logger in workers.loggers">Logger</span>
+                    <span class="worker logger" ng-repeat="logger in data.workers.loggers">Logger</span>
                 </div>
             </div>
             <div id="managerView" class="view" ng-controller="ManagerCtrl">
@@ -41,13 +43,36 @@
                         BUY
                     </li>
                     <li>
-                        <button ng-click="buy_logger()">Logger</button>
+                        <button ng-click="buy_worker('logger')">Logger</button>
                     </li>
                     <li>
-                        <button ng-click="buy_miner()">Miner</button>
+                        <button ng-click="buy_worker('miner')">Miner</button>
                     </li>
                     <li>
-                        <button ng-click="buy_hunter()">Hunter</button>
+                        <button ng-click="buy_worker('hunter')">Hunter</button>
+                    </li>
+                </ul>
+                <ul id="buyList" class="verticalList">
+                    <li>
+                        BUY
+                    </li>
+                    <li>
+                        <button ng-click="buy_building('forge')">Forge</button>
+                    </li>
+                    <li>
+                        <button ng-click="buy_building('workshop')">Workshop</button>
+                    </li>
+                    <li>
+                        <button ng-click="buy_building('logging_camp')">Logging Camp</button>
+                    </li>
+                    <li>
+                        <button ng-click="buy_building('butchery')">Butchery</button>
+                    </li>
+                    <li>
+                        <button ng-click="buy_building('town_center')">Town Center</button>
+                    </li>
+                    <li>
+                        <button ng-click="buy_building('granary')">Granary</button>
                     </li>
                 </ul>
                 <button ng-click="save()">Save</button>

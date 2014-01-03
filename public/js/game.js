@@ -1,37 +1,50 @@
+var fps = 30;
+
 angular.module('game', [])
-
-
 .factory('Data', function () {
-	var resources = {
-		wood: 0,
-		stone: 0,
-		meat: 0
-	};
-	var workers = {
-		miners: [],
-		loggers: [{
-			level: 1
-		}],
-		hunters: []
-	};
-	var upgrades = {
-		miner_speed: 10,
-		logger_speed: 10,
-		hunter_speed: 10,
-
-		miner_quantity: 1,
-		logger_quantity: 1,
-		hunter_quantity: 1
-	};
-
 	if (localStorage['clickerSave']) {
 		return JSON.parse(localStorage['clickerSave']);
 	}
 
+	var resources = {
+		wood: 0,
+		stone: 0,
+		meat: 0
+	},
+	workers = {
+		miners: [],
+		loggers: [],
+		hunters: [{
+			level: 1
+		}]
+	},
+	upgrades = {
+		miner_speed: 1,
+		logger_speed: 1,
+		hunter_speed: 1,
+
+		miner_quantity: 1,
+		logger_quantity: 1,
+		hunter_quantity: 1
+	},
+	buildings = {
+	},
+	costs = {
+		miner: 100,
+		hunter: 100,
+		logger: 100,
+
+		hunger: 0.3
+	},
+	town_name = "My Town";
+
 	return {
 		resources: resources,
 		workers: workers,
-		upgrades: upgrades
+		upgrades: upgrades,
+		costs: costs,
+		buildings: buildings,
+		town_name:town_name
 	};
 })
 
@@ -41,24 +54,19 @@ angular.module('game', [])
 		meatTimer = 0.0;
 
 	function tick() {
-		Data.resources.wood += Data.workers.loggers.length * Data.upgrades.logger_quantity / Data.upgrades.logger_speed;
-		Data.resources.stone += Data.workers.miners.length * Data.upgrades.miner_quantity / Data.upgrades.miner_speed;
-		Data.resources.meat += Data.workers.hunters.length * Data.upgrades.hunter_quantity / Data.upgrades.hunter_speed;
-		$scope.tick = $timeout(tick, 100);
+		Data.resources.wood += (Data.workers.loggers.length * Data.upgrades.logger_quantity) / (Data.upgrades.logger_speed * fps);
+		Data.resources.stone += (Data.workers.miners.length * Data.upgrades.miner_quantity) / (Data.upgrades.miner_speed * fps);
+		Data.resources.meat += (Data.workers.hunters.length * Data.upgrades.hunter_quantity) / (Data.upgrades.hunter_speed * fps);
+
+		Data.resources.meat -= Data.hunger * (Data.workers.miners.length + Data.workers.loggers.length + Data.workers.hunters.length) / 30;
+
+		$scope.tick = $timeout(tick, 1000 / fps);
 	}
-
-	$timeout(tick, 1000 / 30);
-
-	$scope.start_game = function() {
-		$timeout(tick, 1000 / 30);
-	};
-
+	$timeout(tick, 1000 / fps);
 })
 
 .controller('DataCtrl', function ($scope, Data) {
-	$scope.resources = Data.resources;
-	$scope.workers = Data.workers;
-	$scope.upgrades = Data.upgrades;
+	$scope.data = Data;
 })
 
 .controller('ResourceCtrl', function ($scope, Data) {
@@ -71,24 +79,22 @@ angular.module('game', [])
 	$scope.hunt = function () {
 		Data.resources.meat += 1;
 	};
-
 })
 
 .controller('ManagerCtrl', function ($scope, Data) {
-	$scope.buy_logger = function () {
-		Data.workers.loggers.push({
-			level: 1
-		});
+
+	var spend = function(rec, amount) {
+		if (Data.resources[rec] - amount < 0) return false;
+		Data.resources[rec] -= amount;
+		return true;
 	};
-	$scope.buy_miner = function () {
-		Data.workers.miners.push({
-			level: 1
-		});
-	};
-	$scope.buy_hunter = function () {
-		Data.workers.hunters.push({
-			level: 1
-		});
+
+	$scope.buy_worker = function (worker) {
+		if (spend('meat', Data.costs[worker])) {
+			Data.workers[worker+'s'].push({
+				level: 1
+			});
+		}
 	};
 
 	$scope.save = function () {
@@ -101,7 +107,6 @@ angular.module('game', [])
 		localStorage['clickerSave'] = '';
 		window.location.reload(false);
 	};
-
 })
 
 
