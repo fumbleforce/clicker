@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="../css/style.css"></link>
+        <script src="../js/angular.js"></script>
+        <script src="../js/game.js"></script>
+    </head>
+    <body ng-app="game" ng-controller="DataCtrl">
+        <div id="gameWrapper" ng-controller="GameCtrl">
+            <div id="topView" class="view">
+                <ul class="inlineList center">
+                    <li>
+                        Wood <span>{{ resources.wood | integer }}</span>
+                    </li>
+                    <li>
+                        Stone <span>{{ resources.stone | integer }}</span>
+                    </li>
+                    <li>
+                        Meat <span>{{ resources.meat | integer }}</span>
+                    </li>
+                </ul>
+            </div>
+            <div id="gameView" class="view" ng-controller="ResourceCtrl">
+                <button ng-click="chop_wood()">Chop wood</button>
+                <button ng-click="mine_stone()">Mine stone</button>
+                <button ng-click="hunt()">Hunt</button>
+
+                <div class="workerContainer">
+                    <span class="worker hunter" ng-repeat="hunter in workers.hunters">Hunter</span>
+                </div>
+                <div class="workerContainer">
+                    <span class="worker miner" ng-repeat="miner in workers.miners">Miner</span>
+                </div>
+                <div class="workerContainer">
+                    <span class="worker logger" ng-repeat="logger in workers.loggers">Logger</span>
+                </div>
+            </div>
+            <div id="managerView" class="view" ng-controller="ManagerCtrl">
+                <ul id="buyList" class="verticalList">
+                    <li>
+                        BUY
+                    </li>
+                    <li>
+                        <button ng-click="buy_logger()">Logger</button>
+                    </li>
+                    <li>
+                        <button ng-click="buy_miner()">Miner</button>
+                    </li>
+                    <li>
+                        <button ng-click="buy_hunter()">Hunter</button>
+                    </li>
+                </ul>
+                <button ng-click="save()">Save</button>
+                <button ng-click="new_game()">New Game</button>
+            </div>
+        </div>
+    </body>
+</html>

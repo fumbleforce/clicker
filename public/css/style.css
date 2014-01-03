@@ -1,0 +1,200 @@
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+html, body {
+    background-color: white;
+    height:100%;
+    min-height:100%;
+    font-size:20px;
+    background-color:#111111;
+}
+
+div {
+	overflow:auto;
+	overflow-y:hidden;
+	overflow-x: hidden;
+}
+.center {
+	margin: 0 auto;
+}
+
+.view {
+	padding:0 20px;
+	width:1480;
+}
+
+#gameWrapper {
+    width:1500px;
+    margin: 0 auto;
+    min-height:1000px;
+}
+
+
+
+
+
+
+
+
+
+
+#topView {
+	padding:20px;
+}
+
+#topView ul {
+	height:80px;
+	font-size: 50px;
+}
+#topView ul li:hover{
+	color: #fff;
+	background-color: #369;
+}
+
+
+
+
+
+
+#gameView {
+	background-color:green;
+	height:500px;
+}
+#gameView button {
+	font-size:40px;
+	margin:10px;
+	padding:10px;
+}
+.miner {
+	background-color:gray;
+	color:black;
+}
+.logger {
+	background-color:brown;
+	color:white;
+}
+.hunter {
+	background-color:darkgreen;
+	color: white;
+}
+.worker {
+	font-size:20px;
+	text-align:center;
+	margin:5px;
+	padding:10px;
+	border-radius:5px;
+	border: 1px solid black;
+}
+.workerContainer {
+	height:80px;
+	padding-top:12px;
+}
+
+
+
+
+
+#managerView {
+	background-color:brown;
+	height:400px;
+}
+#buyList {
+	width:100px;
+}
+
+
+
+
+
+
+
+
+
+
+ul.inlineList {
+	list-style-type: none;
+	text-align: center;
+	padding:0;
+}
+ul.inlineList li { 
+	display: inline;
+	text-decoration: none;
+	color: #fff;
+	background-color: #036;
+	padding:20px;
+}
+
+
+ul.verticalList {
+	list-style-type: none;
+	text-align: center;
+	color: #fff;
+	background-color: #036;
+	padding:20px;
+}
+
+
+
