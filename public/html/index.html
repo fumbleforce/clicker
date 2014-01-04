@@ -21,24 +21,32 @@
                 </ul>
             </div>
             <div id="gameView" class="view" ng-controller="ResourceCtrl">
-                <h1>{{ data.town_name }}</h1><input type="text" ng-model="data.town_name" placeholder="{{ data.town_name }}"></input>
+                <h1 class="centerText title">{{ data.town_name }}</h1>
                 
-                <button ng-click="chop_wood()">Chop wood</button>
-                <button ng-click="mine_stone()">Mine stone</button>
-                <button ng-click="hunt()">Hunt</button>
+                <button class="tree resource" ng-click="chop_wood()">
+                    <img src="../img/tree.png" onmousedown="return false"></img>
+                </button>
+                
+                <button class="stone resource" ng-click="mine_stone()" ng-repeat="i in getNumber(14)" style="left:{{$index}}00px; top:{{ random_top($index) }}px; z-index:{{ random_top($index) }};">
+                    <img src="../img/mnt.png" height="200" width="200" onmousedown="return false"></img>
+                </button>
 
-                <div class="workerContainer">
+                <button class="meat resource" ng-click="hunt()">
+                    <img src="../img/fox.png" onmousedown="return false"></img>
+                </button>
+
+                <div class="workerContainer hunterContainer">
                     <span class="worker hunter" ng-repeat="hunter in data.workers.hunters">Hunter</span>
                 </div>
-                <div class="workerContainer">
+                <div class="workerContainer minerContainer">
                     <span class="worker miner" ng-repeat="miner in data.workers.miners">Miner</span>
                 </div>
-                <div class="workerContainer">
+                <div class="workerContainer loggerContainer">
                     <span class="worker logger" ng-repeat="logger in data.workers.loggers">Logger</span>
                 </div>
             </div>
             <div id="managerView" class="view" ng-controller="ManagerCtrl">
-                <ul id="buyList" class="verticalList">
+                <ul id="buyList" class="verticalList left">
                     <li>
                         BUY
                     </li>
@@ -52,7 +60,7 @@
                         <button ng-click="buy_worker('hunter')">Hunter</button>
                     </li>
                 </ul>
-                <ul id="buyList" class="verticalList">
+                <ul id="buyList" class="verticalList left">
                     <li>
                         BUY
                     </li>
@@ -75,8 +83,13 @@
                         <button ng-click="buy_building('granary')">Granary</button>
                     </li>
                 </ul>
+
+                <div class="left buildingContainer">
+                    <span class="building" ng-repeat="b in data.buildings">{{ b.name }} x{{ b.amount }}</span>
+                </div>
                 <button ng-click="save()">Save</button>
                 <button ng-click="new_game()">New Game</button>
+                <input type="text" ng-model="data.town_name" placeholder="{{ data.town_name }}"></input>
             </div>
         </div>
     </body>

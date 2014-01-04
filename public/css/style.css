@@ -77,14 +77,43 @@ div {
 	overflow-y:hidden;
 	overflow-x: hidden;
 }
+img {
+	-moz-user-select: -moz-none;
+   -khtml-user-select: none;
+   -webkit-user-select: none;
+   -ms-user-select: none;
+   user-select: none;
+}
+button {
+	-moz-user-select: -moz-none;
+   -khtml-user-select: none;
+   -webkit-user-select: none;
+   -ms-user-select: none;
+   user-select: none;
+}
+
 .center {
 	margin: 0 auto;
+}
+.centerText {
+	width: 100%;
+	text-align:center;
+}
+.title {
+	font-size:50px;
+	color:white;
+	font-weight:bolder;
+}
+
+.left {
+	float:left;
 }
 
 .view {
 	padding:0 20px;
 	width:1480;
 }
+
 
 #gameWrapper {
     width:1500px;
@@ -121,24 +150,47 @@ div {
 
 #gameView {
 	background-color:green;
-	height:500px;
+	height:600px;
+	position:relative;
 }
 #gameView button {
 	font-size:40px;
 	margin:10px;
 	padding:10px;
+	background:none;
+	border:none;
+}
+#gameView button:active {
+	opacity:0.5;
+	border:none;
+}
+#gameView button:focus {
+	border:none;
+	outline:none;
 }
 .miner {
 	background-color:gray;
 	color:black;
 }
+.minerContainer {
+	top:330px;
+	left:40%;
+}
 .logger {
 	background-color:brown;
 	color:white;
 }
+.loggerContainer {
+	left:0;
+	top:30%;
+}
 .hunter {
 	background-color:darkgreen;
 	color: white;
+}
+.hunterContainer {
+	right:0;
+	top:0;
 }
 .worker {
 	font-size:20px;
@@ -151,9 +203,39 @@ div {
 .workerContainer {
 	height:80px;
 	padding-top:12px;
+	position:absolute;
+	z-index:1;
 }
-
-
+.building {
+	font-size:20px;
+	text-align:center;
+	margin:5px;
+	padding:10px;
+	border-radius:5px;
+	border: 1px solid white;
+	background-color:black;
+	color:white;
+}
+.buildingContainer {
+	height:100px;
+	padding-top:12px;
+}
+.resource {
+	position:absolute;
+	z-index:1;
+}
+.meat {
+	top:50%;
+	right:0;
+}
+.tree {
+	bottom:0;
+	left:0;
+}
+.stone {
+	top:20px;
+	left:600px;
+}
 
 
 
