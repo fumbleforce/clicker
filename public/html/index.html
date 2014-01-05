@@ -16,7 +16,7 @@
                         Stone <span>{{ data.resources.stone | integer }}</span>
                     </li>
                     <li>
-                        Meat <span>{{ data.resources.meat | integer }}</span>
+                        Food <span>{{ data.resources.food | integer }}</span>
                     </li>
                 </ul>
             </div>
@@ -31,61 +31,43 @@
                     <img src="../img/mnt.png" height="200" width="200" onmousedown="return false"></img>
                 </button>
 
-                <button class="meat resource" ng-click="hunt()">
+                <button class="food resource" ng-click="hunt()">
                     <img src="../img/fox.png" onmousedown="return false"></img>
                 </button>
 
-                <div class="workerContainer hunterContainer">
-                    <span class="worker hunter" ng-repeat="hunter in data.workers.hunters">Hunter</span>
-                </div>
-                <div class="workerContainer minerContainer">
-                    <span class="worker miner" ng-repeat="miner in data.workers.miners">Miner</span>
-                </div>
-                <div class="workerContainer loggerContainer">
-                    <span class="worker logger" ng-repeat="logger in data.workers.loggers">Logger</span>
-                </div>
+                
             </div>
             <div id="managerView" class="view" ng-controller="ManagerCtrl">
-                <ul id="buyList" class="verticalList left">
-                    <li>
-                        BUY
-                    </li>
-                    <li>
-                        <button ng-click="buy_worker('logger')">Logger</button>
-                    </li>
-                    <li>
-                        <button ng-click="buy_worker('miner')">Miner</button>
-                    </li>
-                    <li>
-                        <button ng-click="buy_worker('hunter')">Hunter</button>
-                    </li>
-                </ul>
-                <ul id="buyList" class="verticalList left">
-                    <li>
-                        BUY
-                    </li>
-                    <li>
-                        <button ng-click="buy_building('forge')">Forge</button>
-                    </li>
-                    <li>
-                        <button ng-click="buy_building('workshop')">Workshop</button>
-                    </li>
-                    <li>
-                        <button ng-click="buy_building('logging_camp')">Logging Camp</button>
-                    </li>
-                    <li>
-                        <button ng-click="buy_building('butchery')">Butchery</button>
-                    </li>
-                    <li>
-                        <button ng-click="buy_building('town_center')">Town Center</button>
-                    </li>
-                    <li>
-                        <button ng-click="buy_building('granary')">Granary</button>
-                    </li>
-                </ul>
 
                 <div class="left buildingContainer">
-                    <span class="building" ng-repeat="b in data.buildings">{{ b.name }} x{{ b.amount }}</span>
+                    <div ng-repeat="(key, building) in data.buildings" 
+                        ng-init="show_desc=false" 
+                        class="building" 
+                        ng-class="{'transparent': !can_afford(key)}">
+
+                        <h2 class="textCenter">{{ building.name }}</h2>
+                        <br>
+                        <div ng-show="show_desc" ng-hide="!show_desc" class="desc">{{ building.desc }}</div>
+                        <button ng-mouseover="show_desc=true" ng-mouseleave="show_desc=false">Info</button>
+                        <div>Owned: {{ building.owned }}</div>
+                        <div>
+                            Costs: <span ng-repeat="c in building.cost">{{c.resource}} x{{c.amount}}</span>
+                        </div>
+                        <button ng-click="buy_building(key)">Buy</button>
+                    </div>
+                </div>
+                <div class="workerContainer">
+                    <div class="worker" ng-repeat="(key, unit) in data.units" ng-class="{'transparent': !can_afford(key)}">
+                        <h2 class="textCenter">{{ unit.name }}</h2>
+                        <br>
+                        <div ng-show="show_desc" ng-hide="!show_desc" class="desc">{{ unit.desc }}</div>
+                        <button ng-mouseover="show_desc=true" ng-mouseleave="show_desc=false">Info</button>
+                        <div>Owned: {{ unit.owned }}</div>
+                        <div>
+                            Costs: <span ng-repeat="c in unit.cost">{{c.resource}} x{{c.amount}}</span>
+                        </div>
+                        <button ng-click="buy_worker(key)">Buy</button>
+                    </div>
                 </div>
                 <button ng-click="save()">Save</button>
                 <button ng-click="new_game()">New Game</button>
