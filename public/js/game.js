@@ -42,6 +42,7 @@ angular.module('game', [])
 				owned: 0,
                 key: "hovel",
 				desc: 'Basic housing. Room for 3 people',
+				positions: [],
 			},
             /*
 			forge: {
@@ -53,6 +54,7 @@ angular.module('game', [])
 				owned: 0,
                 key: "forge",
 				desc: 'Improves resource gathering rate of stone by 10%',
+				positions: [],
 			},
             */
             well: {
@@ -64,6 +66,7 @@ angular.module('game', [])
                 owned: 0,
                 key: "well",
                 desc: 'Provides villagers with water. Keeps 10 more villagers from dying of thirst.',
+                positions: [],
             },
             camp: {
                 name: "Hunter Camp",
@@ -74,6 +77,7 @@ angular.module('game', [])
                 owned: 0,
                 key: "camp",
                 desc: 'Improves food gathering rate by 10%',
+                positions: [],
             },
 			town_center: {
 				name: "Town Center",
@@ -84,6 +88,7 @@ angular.module('game', [])
 				owned: 0,
                 key: "town_center",
 				desc: 'The heart of the city. Is pretty.',
+				positions: [],
 			},
             /*
 			logging_camp: {
@@ -95,6 +100,7 @@ angular.module('game', [])
 				owned: 0,
                 key: "logging_camp",
 				desc: 'Improves wood quantity gathered by 10%',
+				positions: [],
 			},
             */
 			mill: {
@@ -106,6 +112,7 @@ angular.module('game', [])
 				owned: 0,
                 key: "mill",
 				desc: 'Improves the yield of crops by 10%',
+				positions: [],
 			},
 			farm: {
 				name: "Farm",
@@ -119,6 +126,7 @@ angular.module('game', [])
 				owned: 0,
                 key: "farm",
 				desc: 'Slowly generates food',
+				positions: [],
 			},
             warehouse: {
                 name: "Warehouse",
@@ -132,6 +140,7 @@ angular.module('game', [])
                 owned: 0,
                 key: "farm",
                 desc: 'Stores resources so they don\'t spoil. Increases capacity by 100',
+                positions: [],
             },
             /*
 			butchery: {
@@ -143,17 +152,19 @@ angular.module('game', [])
 				owned: 0,
                 key: "butchery",
 				desc: 'Improves the quality of meat resources. Meat yield increases by 10%',
+				positions: [],
 			},
             */
 			blacksmith: {
 				name: "Blacksmith",
 				cost: [{
 					resource: 'wood',
-					amount: 100
+					amount: 1
 				}],
 				owned: 0,
                 key: "blacksmith",
 				desc: 'Ability to create tools.',
+				positions: [],
 			}
 		},
 		units: {
@@ -370,10 +381,14 @@ angular.module('game', [])
 })
 
 
-.service('Building', function(Data) {
+.service('Building', function(Data, Game) {
 
 	this.add_building = function(building) {
-		Data.building[building].owned++;
+		Data.buildings[building].owned++;
+        Data.buildings[building].positions.push({
+            x: Math.floor(Math.random()*100),
+            y: Math.floor(Math.random()*100),
+        });
 		Game.add_building_effect(building);
 	};
 
@@ -526,7 +541,7 @@ angular.module('game', [])
  *
  * Handles resource functions in the game window, such as clicking
  */
-.controller('ResourceCtrl', function ($scope, Resource) {
+.controller('ResourceCtrl', function ($scope, Resource, Data) {
 	$scope.chop_wood = function () {
 		Resource.chop();
 	};
@@ -536,6 +551,7 @@ angular.module('game', [])
 	$scope.hunt = function () {
 		Resource.hunt();
 	};
+    $scope.buildings = Data.buildings;
 })
 
 
@@ -545,6 +561,13 @@ angular.module('game', [])
  */
 .controller('ManagerCtrl', function ($scope, Market, Resource, Building, Unit, Data) {
 
+	var town = {
+		left: '600',
+		right: '800',
+		top: '600',
+		bot: '800'
+	};
+	$scope.town = town;
 	$scope.select = false;
 
 	$scope.buy_villager = function () {
@@ -704,7 +727,32 @@ angular.module('game', [])
         }
     };
 })
+.directive('building', function() {
+    return {
+        restrict: "E",
+        replace: false,
+        link: function (_, element, attrs) {
 
+            attrs.$observe('x', function(x) {
+                console.log('x '+x);
+                element.css('left', x);
+                console.log('x '+element.css('left'));
+            });
+            attrs.$observe('y', function(y) {
+                console.log('y '+y);
+                element.css('top', y);
+            });
+
+            element.css({
+                top: attrs.y+'px',
+                left: attrs.x+'px',
+                display:'block',
+                'z-index':300,
+                position:'absolute'
+            });
+        }
+    };
+})
 
 .directive("menu", function() {
     return {
@@ -720,6 +768,31 @@ angular.module('game', [])
         replace:true,
         controller: "ResourceCtrl",
         templateUrl: "map.html",
+    };
+})
+
+.directive("town", function() {
+    return {
+        restrict: "E",
+        controller: "",
+        templateUrl: "town.html",
+        compile: function ($element, attrs) {
+            var x = ~~attrs.left,
+                y = ~~attrs.top,
+                height = ~~attrs.bot - y,
+                width = ~~attrs.right - x;
+
+            $element.css({
+                top: y+'px',
+                left: x+'px',
+                height: height+'px',
+                width:width+'px',
+                display:'block',
+                background:'gray',
+                'z-index':300,
+                position:'absolute'
+            });
+        }
     };
 })
 
