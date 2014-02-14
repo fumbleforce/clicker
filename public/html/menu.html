@@ -1,0 +1,127 @@
+ <div id="managerView" class="view">
+    <div id="selectView" ng-show="select">
+        
+        <img 
+            class="left symbol" 
+            src="../img/{{ select.key }}_symbol.png" 
+            width="80" 
+            height="80" />
+        
+        <div class="left" style="width:200px;margin-left:10px">
+            <h2 class="textCenter">
+                {{ select.name }}
+            </h2>
+
+        
+            <span ng-repeat="c in select.cost">
+                <img 
+                    class="icon" 
+                    ng-show="c.resource == 'food'" 
+                    src="../img/meat.png">
+                </img>
+                <img 
+                    class="icon" 
+                    ng-show="c.resource == 'stone'" 
+                    src="../img/stone.png">
+                </img>
+                <img
+                    class="icon" 
+                    ng-show="c.resource == 'wood'" 
+                    src="../img/log.png">
+                </img>
+                x{{ c.amount }}
+            </span>
+        
+            <div class="desc">
+                {{ select.desc }}
+            </div>
+        
+            <button ng-click="buy_building(select.key)">
+                Buy
+            </button>
+        </div>
+    </div>
+
+    <div class="left buildingContainer">
+        <div 
+            ng-repeat="(key, building) in buildings" 
+            class="building"
+            ng-click="select_building(key)"
+            ng-class="{'transparent': !can_afford(key)}">
+
+            <img 
+                class="left symbol" 
+                src="../img/{{ key }}_symbol.png" 
+                width="30" 
+                height="30" />
+
+            <div class="left">
+                <h2 class="textCenter">
+                    {{ building.name }}
+                </h2>
+                {{ building.owned }}
+            </div>
+        </div>
+    </div>
+
+    <div class="workerContainer">
+        <h2>
+            Populaton: {{ population }}
+        </h2>
+        <h2>
+            Free: {{ free }}
+        </h2>
+        
+        <div 
+            class="worker"
+            ng-class="{'transparent': !can_afford('villager')}">
+
+            <button ng-click="buy_villager()">
+                Buy Villager
+            </button>
+        </div>
+    
+        <div 
+            class="worker"
+            ng-repeat="(key, unit) in units">
+            
+            <img 
+                class="left symbol" 
+                src="../img/{{ key }}.png" 
+                width="30" 
+                height="30" />
+                
+            <div class="left">
+                <h2 class="textCenter" >
+                    {{ unit.name }}
+                </h2>
+                
+                <span>
+                    Assigned: {{ unit.active }}
+                </span>
+
+                <button ng-click="assign(key)">
+                    Assign
+                </button>
+
+                <button ng-click="deassign(key)">
+                    Deassign
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <button ng-click="save()">
+        Save
+    </button>
+
+    <button ng-click="new_game()">
+        New Game
+    </button>
+    
+    <input 
+        type="text" 
+        ng-model="data.town_name" 
+        placeholder="{{ data.town_name }}">
+    </input>
+</div>
