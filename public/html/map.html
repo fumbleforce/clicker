@@ -3,42 +3,18 @@
         {{ data.town_name }}
     </h1>
     
-    <div class="landscape" ng-include="'world.html'"></div>
+    <div class="landscape" ng-include="'/html/world.html'"></div>
 
     <forest left="100" right="300" top="300" bot="500" density="30"></forest>
     <forest left="300" right="400" top="400" bot="500" density="30"></forest>
     <forest left="100" right="650" top="500" bot="700" density="20"></forest>
     <forest left="200" right="650" top="700" bot="800" density="10"></forest>
-    <forest left="300" right="550" top="800" bot="850" density="5"></forest>
     
-    <mountains></mountains>
-
+    <mountains left="400" right="1250" top="100" bot="250"></mountains>
+    <mountains left="600" right="700" top="250" bot="350"></mountains>
 
     <town left='900' right='1300' top='600' bot='900'></town>
 
-    <button 
-        class="food resource" 
-        ng-click="hunt()" 
-        style="top:600px;left: 300px;z-index:600">
-
-        <img 
-            width="30" 
-            height="30" 
-            src="../img/deer.png" 
-            onmousedown="return false">
-        </img>
-    </button>
-
-    <button 
-        class="food resource" 
-        ng-click="hunt()" 
-        style="top:600px;left: 400px;z-index:600">
-
-        <img 
-            width="30" 
-            height="30"  
-            src="../img/rabbit.png" 
-            onmousedown="return false">
-        </img>
-    </button>
+    <wildlife left="150" right="650" top="500" bot="800" density="30"></wildlife>
+    
 </div>

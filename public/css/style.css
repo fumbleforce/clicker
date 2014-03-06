@@ -51,7 +51,18 @@ table {
 
 
 
-
+@font-face {
+  font-family: 'Averia Libre';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Averia Libre Regular'), local('AveriaLibre-Regular'), url(/fonts/AveriaLibre-Regular.ttf) format('ttf');
+}
+@font-face {
+  font-family: 'Hanalei Fill';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Hanalei Fill'), local('HanaleiFill-Regular'), url(/fonts/HanaleiFill-Regular.ttf) format('ttf');
+}
 
 
 
@@ -66,6 +77,10 @@ table {
 	
 	font-weight: normal;
 	font-family: 'Averia Libre', cursive;
+	-moz-user-select: none; 
+    -khtml-user-select: none; 
+    -webkit-user-select: none; 
+    -o-user-select: none; 
 }
 html, body {
     background-color: white;
@@ -127,12 +142,17 @@ button {
 	padding:0 20px;
 	width:1480;
 }
+.abs {
+	display:block;
+	position:absolute;
+}
 
 
 #gameWrapper {
     width:100%;
     margin: 0 auto;
     min-height:1000px;
+    overflow:auto;
 }
 
 
@@ -358,5 +378,7 @@ img.icon {
 
 
 
-
+g#g2886:hover{
+	opacity:0.8;
+}
 

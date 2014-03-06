@@ -234,7 +234,7 @@ angular.module('game', [])
 	};
 
 	this.hunt = function () {
-		Data.resources.food++;
+		Data.resources.food += 10;
 	};
 
 	this.add_resource = function(rec, amount) {
@@ -282,6 +282,11 @@ angular.module('game', [])
 				break;
 		}
 	};
+
+    this.town = {
+        width: 350,
+        height: 300,
+    };
 })
 
 .service("Upgrade", function(Data) {
@@ -370,6 +375,63 @@ angular.module('game', [])
 		Data.units.pupulation--;
 	};
 
+    this.move = function() {
+        var mod, scale, width, height, type;
+
+        _.each(Data.animals, function(a) {
+            if (!a.direction) {
+                a.direction = {dist:0};
+            }
+
+            if (a.direction.dist <= 0) {
+                a.direction.dist = Math.floor(Math.random() * 20) + 1;
+                mod = Math.random();
+                a.direction.x = (Math.random() < 0.5 ? -1 : 1) * mod;
+                mod = Math.random();
+                a.direction.y = (Math.random() < 0.5 ? -1 : 1) * mod;
+            }
+
+            a.x += a.direction.x;
+            a.y += a.direction.y;
+
+            scale = a.y/1080.0;
+            type = a.type;
+            if (type == 1) {
+                width = 50 * scale;
+                height = 50 * scale;
+            } else {
+                width = 25 * scale;
+                height = 25 * scale;
+            }
+
+            $('#'+a.id).css({
+                left: a.x + 'px',
+                top: a.y + 'px',
+                'z-index': Math.floor(a.y),
+                
+            }).find('img').css({
+                width: width,
+                height: height
+            });
+
+            a.direction.dist -= 1;
+        });
+    };
+
+    var regrowTick = 0;
+
+    this.regrow = function () {
+        if (regrowTick > 10) {
+            regrowTick = 0;
+        }
+
+        if (Data.animals.length > 50) {
+
+        }
+
+        regrowTick++;
+    };
+
 	this.is_unit = function(item) {
 		return (item in Data.units.labour || item === 'villager');
 	};
@@ -385,9 +447,18 @@ angular.module('game', [])
 
 	this.add_building = function(building) {
 		Data.buildings[building].owned++;
+        var x = Math.floor(Math.random()*Game.town.width),
+            y = Math.floor(Math.random()*Game.town.height),
+            scale = 1/y,
+            width = 30 + y*0.2,
+            height = 30  + y*0.2;
+        y -= height;
+        x -= width;
         Data.buildings[building].positions.push({
-            x: Math.floor(Math.random()*100),
-            y: Math.floor(Math.random()*100),
+            x: x,
+            y: y,
+            width: width,
+            height: height
         });
 		Game.add_building_effect(building);
 	};
@@ -493,6 +564,9 @@ angular.module('game', [])
 
 		}
 
+        Unit.move();
+        Unit.regrow();
+
 		t = $timeout(tick, 1000 / fps);
 	}
 
@@ -548,8 +622,11 @@ angular.module('game', [])
 	$scope.mine_stone = function () {
 		Resource.mine();
 	};
-	$scope.hunt = function () {
+	$scope.hunt = function (id) {
 		Resource.hunt();
+        var index = _.find(Data.animals, function(a) { return a.id === id; });
+        Data.animals.splice(index, 1);
+        $('#'+id).remove();
 	};
     $scope.buildings = Data.buildings;
 })
@@ -567,11 +644,15 @@ angular.module('game', [])
 		top: '600',
 		bot: '800'
 	};
+
 	$scope.town = town;
 	$scope.select = false;
 
 	$scope.buy_villager = function () {
-		Market.buy_villager();
+		
+        Market.buy_villager();
+        $scope.population = Unit.population();
+        $scope.free = Unit.free();
 	};
 
 	$scope.buy_building = function (building) {
@@ -580,21 +661,17 @@ angular.module('game', [])
 
 	$scope.assign = function(unit) {
 		Unit.assign(unit);
+        $scope.population = Unit.population();
+        $scope.free = Unit.free();
 	};
 	$scope.deassign = function(unit) {
 		Unit.deassign(unit);
+        $scope.population = Unit.population();
+        $scope.free = Unit.free();
 	};
 
 	$scope.population = Data.units.population;
-	$scope.$watch("Unit.population()", function (newVal) {
-		console.log('pop changed');
-		if (newVal) $scope.population = newVal;
-	}, true);
-	
 	$scope.free = Unit.free();
-	$scope.$watch("Unit.free()", function (newVal) {
-		if (newVal) $scope.free = newVal;
-	}, true);
 
 	$scope.save = function () {
 		var d = JSON.stringify(Data);
@@ -678,7 +755,11 @@ angular.module('game', [])
                 top = ~~attrs.top,
                 density = 100/~~attrs.density,
                 num = (right-left)/density,
+                scale = top/1080.0,
+                width = 60 * scale,
+                height = 100 * scale,
                 trees = [];
+
             for (i = 0; i < num; i++) {
 				type = Math.floor(Math.random() * 3)+ 1;
 				y = Math.floor(Math.random() * (bot-top)) + top;
@@ -688,9 +769,9 @@ angular.module('game', [])
                     'left:' + x + 'px;' +
                     'z-index:' + y + '">' +
                     '<img '+
-                        'width="' + 30 + '"' +
-                        'height="' + 50 + 'px"'+
-                        'src="../img/tree' + type + '.png">' +
+                        'width="' + width + '"' +
+                        'height="' + height + '"'+
+                        'src="/img/tree' + type + '.png">' +
                     '</img></button>';
                 element.append(tree);
 			}
@@ -703,53 +784,156 @@ angular.module('game', [])
         restrict: "E",
         replace: false,
         scope: true,
-        compile: function (element) {
+        compile: function (element, attrs) {
             var i, type, x, y,
-            mountains = [];
-            
-            for (i=0; i<30; i++) {
+                left = ~~attrs.left,
+                right = ~~attrs.right,
+                bot = ~~attrs.bot,
+                top = ~~attrs.top,
+                density = 10,
+                num = (right-left)/density,
+                mountains = [];
+
+            for (i = 0; i < num; i++) {
                 
-                y = Math.floor(Math.random() * 140)+ 30;
-                x = i * 25 + 370;
+                y = Math.floor(Math.random() * (bot-top))+ top;
+                x = ((right-left)/num)*i + left;
                 type = Math.floor(Math.random() * 2)+ 1;
+
+                scale = Math.abs(y - (1080.0/2)) / (1080.0/2) ;
+                width = 100 * scale;
+                height = 100 * scale;
                 
                 tree = '<button class="stone resource" ng-click="mine_stone()"' +
                     'style="top:' + y + 'px;' +
                     'left:' + x + 'px;' +
                     'z-index:' + y + '">' +
                     '<img '+
-                        'width="' + 150 + '"' +
-                        'height="' + 150 + 'px"'+
-                        'src="../img/mnt' + type + '.png">' +
+                        'width="' + width + '"' +
+                        'height="' + height + 'px"'+
+                        'src="/img/mnt' + type + '.png">' +
                     '</img></button>';
                 element.append(tree);
             }
         }
     };
 })
+
+.directive('wildlife', function($compile, Data) {
+
+    function add_animal(el, left, right, top, bot) {
+        if (!Data.animals) Data.animals = [];
+
+        var animal, scale, width, height, id;
+
+        y = Math.floor(Math.random() * (bot-top))+ top;
+        x = Math.floor(Math.random() * (right-left)) + left;
+        type = Math.floor(Math.random() * 2)+ 1;
+        scale = top/1080.0;
+
+        if (type == 1) {
+            width = 100 * scale;
+            height = 100 * scale;
+        } else {
+            width = 50 * scale;
+            height = 50 * scale;
+        }
+
+        id = Math.random().toString(36).substring(7);
+        
+        animal = '<button '+
+            'id="'+id+'"'+
+            'class="food resource" ng-click="hunt(\''+id+'\')"' +
+            'style="top:' + y + 'px;' +
+            'left:' + x + 'px;' +
+            'z-index:' + y + '">' +
+            '<img '+
+                'width="' + width + '"' +
+                'height="' + height + 'px"'+
+                'src="/img/animal' + type + '.png">' +
+            '</img></button>';
+        el.append(animal);
+        Data.animals.push({
+            width: width,
+            height: height,
+            x: x,
+            y: y,
+            scale: scale,
+            type: type,
+            id: id
+        });
+    }
+
+    return {
+        restrict: "E",
+        replace: false,
+        scope: true,
+        compile: function (element, attrs) {
+            var i, type, x, y,
+                left = ~~attrs.left,
+                right = ~~attrs.right,
+                bot = ~~attrs.bot,
+                top = ~~attrs.top,
+                density = 10,
+                num = (right-left)/density;
+
+            for (i = 0; i < num; i++) {
+                add_animal(element, left, right, top, bot);
+            }
+
+            return function postLink($scope, $element, attrs) {
+
+            };
+        }
+    };
+})
+
 .directive('building', function() {
     return {
         restrict: "E",
         replace: false,
-        link: function (_, element, attrs) {
-
-            attrs.$observe('x', function(x) {
-                console.log('x '+x);
-                element.css('left', x);
-                console.log('x '+element.css('left'));
-            });
-            attrs.$observe('y', function(y) {
-                console.log('y '+y);
-                element.css('top', y);
-            });
+        compile: function (element, attrs) {
 
             element.css({
-                top: attrs.y+'px',
-                left: attrs.x+'px',
                 display:'block',
                 'z-index':300,
                 position:'absolute'
             });
+
+            return function postLink($scope, $element, attrs) {
+                var holding = false,
+                    l, t;
+
+                $element.hover(function(e) {
+                    $element.css('opacity', 0.9);
+                }, function() {
+                    $element.css('opacity', 1);
+                });
+
+                $element.mousedown(function(e) {
+                    e.preventDefault();
+                    holding = true;
+                });
+                $element.mouseup(function(e) {
+                    e.preventDefault();
+                    holding = false;
+                });
+                $element.mousemove(function(e) {
+                    e.preventDefault();
+                    if (holding) {
+                        l = e.pageX - $element.parent().offset().left - $element.width()/2;
+                        t = e.pageY - $element.parent().offset().top - $element.height()/2;
+                        $element.css({
+                            left: l,
+                            top: t,
+                        });
+                    }
+                });
+                $element.mouseleave(function(e) {
+                    e.preventDefault();
+                    holding = false;
+                });
+            };
         }
     };
 })
@@ -759,7 +943,7 @@ angular.module('game', [])
         restrict: "E",
         replace:true,
         controller: "ManagerCtrl",
-        templateUrl: "menu.html",
+        templateUrl: "/html/menu.html",
     };
 })
 .directive("map", function() {
@@ -767,20 +951,20 @@ angular.module('game', [])
         restrict: "E",
         replace:true,
         controller: "ResourceCtrl",
-        templateUrl: "map.html",
+        templateUrl: "/html/map.html",
     };
 })
 
-.directive("town", function() {
+.directive("town", function(Game) {
     return {
         restrict: "E",
         controller: "",
-        templateUrl: "town.html",
+        templateUrl: "/html/town.html",
         compile: function ($element, attrs) {
             var x = ~~attrs.left,
                 y = ~~attrs.top,
-                height = ~~attrs.bot - y,
-                width = ~~attrs.right - x;
+                height = Game.town.height,
+                width = Game.town.width;
 
             $element.css({
                 top: y+'px',
@@ -788,7 +972,7 @@ angular.module('game', [])
                 height: height+'px',
                 width:width+'px',
                 display:'block',
-                background:'gray',
+                border:'1px dashed black',
                 'z-index':300,
                 position:'absolute'
             });
@@ -806,3 +990,8 @@ angular.module('game', [])
 		return parseInt(input, 10);
 	};
 });
+
+
+$('button').on('dragstart', function(event) { event.preventDefault(); return false; });
+$('img').on('dragstart', function(event) { event.preventDefault(); return false; });
+window.ondragstart = function() { return false; };

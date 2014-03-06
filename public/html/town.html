@@ -1,6 +1,16 @@
 
 <div ng-repeat="b in buildings">
-	<building ng-repeat="pos in b.positions" x="{{ pos.x }}" y="{{ pos.y }}">
-		
+	<building 
+		class="abs" 
+		ng-repeat="pos in b.positions" 
+		style="
+			left:{{ pos.x }}px;
+			top:{{ pos.y }}px;
+			z-index:{{ pos.y }}">
+		<img 
+			src="/img/{{ b.key }}.png" 
+			width="{{ pos.width }}" 
+			height="{{ pos.height }}">
+		</img>
 	</building>
 </div>
